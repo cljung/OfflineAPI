@@ -2,6 +2,10 @@
 
 Sample for showing aspnet webapi using a mix of Entra ID, Keycloak and certificate based authentication
 
+## Description
+
+There is a blog post that explains this sample [here](https://blog.redbaronofazure.com/?p=7939).
+
 ## Project Folders
 
 | Folder | Description |
