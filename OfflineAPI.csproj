@@ -15,6 +15,9 @@
 
   <ItemGroup>
     <Folder Include="certs\" />
+    <Folder Include="scripts\" />
+    <Folder Include="keycloak\" />
+    <Folder Include="media\" />
   </ItemGroup>
 
 </Project>
