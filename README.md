@@ -65,9 +65,9 @@ The `CertPath` holds the PFX certificate that should be used to authenticate out
     },
     "Certificate": {
       "ValidCertsPaths": [
-        "certs\\OfflineAPI.cer"
+        "certs/OfflineAPI.cer"
       ],
-      "CertPath": "certs\\OfflineAPI.pfx",
+      "CertPath": "certs/OfflineAPI.pfx",
       "CertPassphrase": "OfflineAPI"
     }
   }
@@ -79,9 +79,9 @@ To test locally, do the followind:
 
 1. If you want to use Keycloak, make sure you have Docker Desktop installed and that it is working inside WSL (Settings > Resources > Enable integration with my default WSL distro).
 1. Run ./start-keycloak-docker.sh. Give it a few minutes and check that the admin console responds at `http://localhost:8080`. Userid and password is in the bash script
-1. Update your Entra ID tenant ID in the appsettings.json file (guid after sts.windows.net in `Authority`)
+1. Update your Entra ID tenant ID in the appsettings.[Development.]json file (guid after sts.windows.net in `Authority`)
 1. Create an App registration in Entra ID. Copy the AppID and update appsettings.json `ClientID` and `Audience`.
-1. Run the OfflineAPI 
+1. Run the OfflineAPI (Visual Studio, VSCode or via command line `dotnet run -lp "https"`)
 1. Open a powershell command prompt, cd into scripts, and test run all of the test scripts
 
 ## Output

@@ -1,5 +1,5 @@
-$certBasePath = "$(pwd)\..\certs"
-$certPath = "$certBasePath\OfflineAPI.pfx"
+$certBasePath = "$(pwd)/../certs"
+$certPath = "$certBasePath/OfflineAPI.pfx"
 $certSecurePassword = ConvertTo-SecureString "OfflineAPI" -AsPlainText -Force
 
 $cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($certPath, $certSecurePassword)

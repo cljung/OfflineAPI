@@ -1,4 +1,4 @@
-$kcdata = (Get-Content "..\keycloak\data\kcidp-app.json" | ConvertFrom-json)
+$kcdata = (Get-Content "../keycloak/data/kcidp-app.json" | ConvertFrom-json)
 
 $KeycloakBaseUrl = "$($kcdata.clients[0].rootUrl):8080"
 $RealmName       = $kcdata.realm
