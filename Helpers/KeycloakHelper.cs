@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 namespace Keycloak.Helpers; 
 public interface IKeycloakTokenAcquisition {
     public Task<(string?, string?)> AcquireAccessToken(string clientId, string clientSecret);
+    public Task LoadDiscoveryDocument();
 }
 public class KeycloakTokenAcquisition : IKeycloakTokenAcquisition {
     private readonly HttpClient _httpClient;
@@ -21,13 +22,14 @@ public class KeycloakTokenAcquisition : IKeycloakTokenAcquisition {
         _authority = _configuration["Authentication:Keycloak:Authority"]!.ToString();
         _httpClient = new HttpClient();
     }
-    private async Task LoadDiscoveryDocument() {
+    public async Task LoadDiscoveryDocument() {
         if (_disco == null || (_disco != null && _disco.IsError)) {
-            _log.LogTrace($"Loading discovery document: {_authority}");
             _disco = await _httpClient.GetDiscoveryDocumentAsync(_authority);
             if (_disco.IsError) {
                 _log.LogError($"Failed loading discovery document: {_authority}. {_disco.Error}");
                 throw new Exception(_disco.Error);
+            } else {
+                _log.LogTrace($"Loaded discovery document: {_authority}");
             }
         }
     }

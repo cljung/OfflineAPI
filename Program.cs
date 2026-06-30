@@ -57,6 +57,14 @@ builder.Services.AddAuthorization(options => {
 
 var app = builder.Build();
 
+var keycloak = app.Services.GetService<IKeycloakTokenAcquisition>();
+var logger = app.Services.GetService<ILogger<Program>>();
+try {
+    await keycloak!.LoadDiscoveryDocument();
+} catch {
+    logger!.LogWarning( $"No Keycloak authentication is possible until authority is available." );
+}
+
 app.UseHttpsRedirection();
 app.UseCertificateForwarding();
 app.UseRouting();

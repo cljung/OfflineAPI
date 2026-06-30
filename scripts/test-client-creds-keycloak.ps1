@@ -15,5 +15,5 @@ Write-Host "Successfully authenticated with Keycloak! Access token received." -F
 
 $Headers = @{ "Authorization" = "Bearer $AccessToken"; "Accept" = "application/json" }
     
-$ApiResponse = Invoke-RestMethod -Uri "https://localhost:5001/api/management" -Method Get -Headers $Headers
+$ApiResponse = Invoke-RestMethod -Uri "https://localhost:5001/api/management" -Method Get -Headers $Headers -SkipCertificateCheck
 $ApiResponse

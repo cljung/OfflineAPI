@@ -11,7 +11,7 @@ public class TrustedCertificateStore {
 }
 
 public static class CertificateAuthenticationExtensions {
-    private static ILogger<Program> _log;
+    private static ILogger<Program>? _log;
     public static WebApplicationBuilder AddCertificateBasedAuthentication(this WebApplicationBuilder builder) {
         // to have Kestrel accept certificates + self-signed
         builder.WebHost.ConfigureKestrel(options => {
@@ -45,16 +45,17 @@ public static class CertificateAuthenticationExtensions {
             string certPassphrase = builder.Configuration["Authentication:Certificate:CertPassphrase"]!.ToString();
             SecureString secureString = new SecureString();
             certPassphrase.ToCharArray().ToList().ForEach(p => secureString.AppendChar(p));
-            TrustedCertificateStore.clientCert = new X509Certificate2(certPath, secureString);
+            TrustedCertificateStore.clientCert = X509CertificateLoader.LoadPkcs12FromFile(certPath, certPassphrase);
+            _log!.LogTrace($"Certificate for outgoing authentication loaded: File: {certPath}, Subject: {TrustedCertificateStore.clientCert !.Subject}, Thumbprint: {TrustedCertificateStore.clientCert!.Thumbprint}");
         } catch (Exception ex) {
-            _log.LogError($"Failed to load certificates. Use CER files for ValidCertsPaths and PFX for CertPath. {ex.Message}");
+            _log!.LogError($"Failed to load certificates. Use CER files for ValidCertsPaths and PFX for CertPath. {ex.Message}");
         }
 
         builder.Services.AddHttpClient("CertBasedAuthClient")
             .ConfigurePrimaryHttpMessageHandler(() => {
                 var handler = new SocketsHttpHandler();
                 handler.SslOptions.ClientCertificates = new X509Certificate2Collection();
-                handler.SslOptions.ClientCertificates.Add(TrustedCertificateStore.clientCert);
+                handler.SslOptions.ClientCertificates.Add(TrustedCertificateStore.clientCert!);
                 handler.SslOptions.RemoteCertificateValidationCallback = (sender, c, ch, e) => true;
                 return handler;
             });
@@ -95,6 +96,7 @@ public static class CertificateAuthenticationExtensions {
             }
             X509Certificate2 cert = X509CertificateLoader.LoadCertificateFromFile(path);
             store.Add(cert!);
+            _log!.LogTrace($"Trusted certificate loaded: File: {path}, Subject: {cert!.Subject}, Thumbprint: {cert!.Thumbprint}");
         }
         return store;
     }
@@ -108,12 +110,12 @@ public static class CertificateAuthenticationExtensions {
             OnCertificateValidated = context => {
                 bool valid = ValidateClientCertificate(context);
                 string msg = "Certificate is " + (valid ? "" : "not ") + $"trusted. Subject: {context.ClientCertificate.Subject}, Thumbprint: {context.ClientCertificate.Thumbprint}";
-                _log.LogInformation(msg);
+                _log!.LogInformation(msg);
                 return Task.CompletedTask;
             },
             OnAuthenticationFailed = context => {
                 string errmsg = $"Authentication failed during certificate evaluation. {context.Exception.Message}";
-                _log.LogInformation(errmsg);
+                _log!.LogInformation(errmsg);
                 context.Fail(errmsg);
                 return Task.CompletedTask;
             }
